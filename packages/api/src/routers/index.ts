@@ -1,17 +1,29 @@
 import type { RouterClient } from "@orpc/server";
 
-import { protectedProcedure, publicProcedure } from "../index";
+import { publicProcedure } from "../index";
+import { categoryRouter } from "./categories/router";
+import { transactionRouter } from "./transactions/router";
+import { budgetRouter } from "./budgets/router";
+import { dashboardRouter } from "./dashboard/router";
 
 export const appRouter = {
+  /** ヘルスチェック */
   healthCheck: publicProcedure.handler(() => {
     return "OK";
   }),
-  privateData: protectedProcedure.handler(({ context }) => {
-    return {
-      message: "This is private",
-      user: context.session?.user,
-    };
-  }),
+
+  /** カテゴリ管理 */
+  categories: categoryRouter,
+
+  /** 取引管理 */
+  transactions: transactionRouter,
+
+  /** 予算管理 */
+  budgets: budgetRouter,
+
+  /** ダッシュボード */
+  dashboard: dashboardRouter,
 };
+
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;

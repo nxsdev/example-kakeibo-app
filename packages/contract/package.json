@@ -1,0 +1,21 @@
+{
+  "name": "@example-kakeibo-app/contract",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@orpc/contract": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@example-kakeibo-app/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

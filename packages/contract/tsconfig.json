@@ -1,0 +1,7 @@
+{
+  "extends": "@example-kakeibo-app/config/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist"
+  }
+}

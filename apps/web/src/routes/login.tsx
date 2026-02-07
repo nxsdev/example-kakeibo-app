@@ -5,11 +5,11 @@ import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 
 export const Route = createFileRoute("/login")({
-  component: RouteComponent,
+  component: LoginPage,
 });
 
-function RouteComponent() {
-  const [showSignIn, setShowSignIn] = useState(false);
+function LoginPage() {
+  const [showSignIn, setShowSignIn] = useState(true);
 
   return showSignIn ? (
     <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />

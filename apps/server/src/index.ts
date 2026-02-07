@@ -4,9 +4,10 @@ import { auth } from "@example-kakeibo-app/auth";
 import { env } from "@example-kakeibo-app/env/server";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import { onError } from "@orpc/server";
+import { ORPCError, ValidationError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -24,35 +25,74 @@ app.use(
   }),
 );
 
+// Better Auth ハンドラー
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
-export const apiHandler = new OpenAPIHandler(appRouter, {
+// OpenAPI ハンドラー（Scalar + REST 互換用）
+const apiHandler = new OpenAPIHandler(appRouter, {
   plugins: [
     new OpenAPIReferencePlugin({
       schemaConverters: [new ZodToJsonSchemaConverter()],
     }),
   ],
   interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
+    async (options) => {
+      try {
+        return await options.next();
+      } catch (error) {
+        // バリデーションエラーを 422 に変換
+        if (
+          error instanceof ORPCError &&
+          error.code === "BAD_REQUEST" &&
+          error.cause instanceof ValidationError
+        ) {
+          throw new ORPCError("BAD_REQUEST", {
+            status: 422,
+            message: "バリデーションエラー",
+            data: { issues: error.cause.issues },
+            cause: error.cause,
+          });
+        }
+        console.error(error);
+        throw error;
+      }
+    },
   ],
 });
 
-export const rpcHandler = new RPCHandler(appRouter, {
+// RPC ハンドラー（フロントエンド通信用）
+const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
+    async (options) => {
+      try {
+        return await options.next();
+      } catch (error) {
+        if (
+          error instanceof ORPCError &&
+          error.code === "BAD_REQUEST" &&
+          error.cause instanceof ValidationError
+        ) {
+          throw new ORPCError("BAD_REQUEST", {
+            status: 422,
+            message: "バリデーションエラー",
+            data: { issues: error.cause.issues },
+            cause: error.cause,
+          });
+        }
+        console.error(error);
+        throw error;
+      }
+    },
   ],
 });
 
+// /rpc/* → RPC、/api/* → OpenAPI の両方をハンドル
 app.use("/*", async (c, next) => {
   const context = await createContext({ context: c });
 
   const rpcResult = await rpcHandler.handle(c.req.raw, {
     prefix: "/rpc",
-    context: context,
+    context,
   });
 
   if (rpcResult.matched) {
@@ -60,8 +100,8 @@ app.use("/*", async (c, next) => {
   }
 
   const apiResult = await apiHandler.handle(c.req.raw, {
-    prefix: "/api-reference",
-    context: context,
+    prefix: "/api",
+    context,
   });
 
   if (apiResult.matched) {
@@ -70,6 +110,16 @@ app.use("/*", async (c, next) => {
 
   await next();
 });
+
+// Scalar API ドキュメント
+app.get(
+  "/docs",
+  Scalar({
+    theme: "purple",
+    pageTitle: "Example Kakeibo API",
+    url: "/api/spec.json",
+  }),
+);
 
 app.get("/", (c) => {
   return c.text("OK");

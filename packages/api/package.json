@@ -12,12 +12,15 @@
   "scripts": {},
   "dependencies": {
     "@example-kakeibo-app/auth": "workspace:*",
+    "@example-kakeibo-app/contract": "workspace:*",
     "@example-kakeibo-app/db": "workspace:*",
     "@example-kakeibo-app/env": "workspace:*",
     "@orpc/client": "catalog:",
+    "@orpc/contract": "catalog:",
     "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
+    "drizzle-orm": "catalog:",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },
