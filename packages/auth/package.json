@@ -1,0 +1,24 @@
+{
+  "name": "@example-kakeibo-app/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@example-kakeibo-app/db": "workspace:*",
+    "@example-kakeibo-app/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@example-kakeibo-app/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
