@@ -18,6 +18,7 @@
     "@scalar/hono-api-reference": "catalog:",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
     "hono": "catalog:",
     "zod": "catalog:"
   },

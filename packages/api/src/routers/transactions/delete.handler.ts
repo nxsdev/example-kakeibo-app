@@ -1,4 +1,3 @@
-import { db } from "@example-kakeibo-app/db";
 import { transactions } from "@example-kakeibo-app/db/schema/index";
 import { eq, and } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
@@ -10,14 +9,15 @@ type Input = z.infer<typeof transactionDeleteInputSchema>;
 
 /** 取引を削除する */
 export async function handleDeleteTransaction(input: Input, context: AuthenticatedContext) {
+  const { db } = context;
   const [deleted] = await db
     .delete(transactions)
-    .where(and(eq(transactions.id, input.id), eq(transactions.user_id, context.session.user.id)))
+    .where(and(eq(transactions.id, input.id), eq(transactions.userId, context.session.user.id)))
     .returning();
 
   if (!deleted) {
     throw new ORPCError("NOT_FOUND", { message: "取引が見つかりません" });
   }
 
-  return { success: true };
+  return { id: deleted.id };
 }

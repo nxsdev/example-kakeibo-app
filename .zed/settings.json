@@ -1,0 +1,46 @@
+{
+  "lsp": {
+    "oxlint": {
+      "initialization_options": {
+        "settings": {
+          "run": "onType",
+          "fixKind": "safe_fix",
+          "typeAware": true,
+          "unusedDisableDirectives": "warn"
+        }
+      }
+    },
+    "oxfmt": {
+      "initialization_options": {
+        "settings": {
+          "configPath": ".oxfmtrc.json"
+        }
+      }
+    },
+    "tailwindcss-language-server": {
+      "settings": {
+        "lint": {
+          "suggestCanonicalClasses": "ignore"
+        }
+      }
+    }
+  },
+  "languages": {
+    "JavaScript": {
+      "format_on_save": "on",
+      "formatter": { "language_server": { "name": "oxfmt" } }
+    },
+    "TypeScript": {
+      "format_on_save": "on",
+      "formatter": { "language_server": { "name": "oxfmt" } }
+    },
+    "TSX": {
+      "format_on_save": "on",
+      "formatter": { "language_server": { "name": "oxfmt" } }
+    },
+    "JSON": {
+      "format_on_save": "on",
+      "formatter": { "language_server": { "name": "oxfmt" } }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { categoryRouter } from "./categories/router";
 import { transactionRouter } from "./transactions/router";
 import { budgetRouter } from "./budgets/router";
 import { dashboardRouter } from "./dashboard/router";
+import { reportRouter } from "./reports/router";
 
 export const appRouter = {
   /** ヘルスチェック */
@@ -23,6 +24,9 @@ export const appRouter = {
 
   /** ダッシュボード */
   dashboard: dashboardRouter,
+
+  /** レポート */
+  reports: reportRouter,
 };
 
 export type AppRouter = typeof appRouter;

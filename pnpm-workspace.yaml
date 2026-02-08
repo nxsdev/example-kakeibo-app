@@ -1,24 +1,30 @@
 packages:
   - apps/*
   - packages/*
+
 catalog:
-  dotenv: ^17.2.2
-  zod: ^4.1.13
-  typescript: ^5
-  "@types/node": ^22.13.14
   "@cloudflare/workers-types": ^4.20251213.0
-  hono: ^4.8.2
-  "@orpc/server": ^1.12.2
-  "@orpc/openapi": ^1.12.2
-  "@orpc/zod": ^1.12.2
+  "@formkit/tempo": ^0.1.2
+  "@libsql/client": 0.15.15
   "@orpc/client": ^1.12.2
   "@orpc/contract": ^1.12.2
-  better-auth: ^1.4.18
-  alchemy: ^0.82.1
-  wrangler: ^4.54.0
-  "@libsql/client": 0.15.15
-  libsql: 0.5.22
-  drizzle-orm: ^0.45.1
+  "@orpc/openapi": ^1.12.2
+  "@orpc/server": ^1.12.2
+  "@orpc/zod": ^1.12.2
   "@scalar/hono-api-reference": ^0.9.40
-  "@formkit/tempo": ^0.1.2
+  "@types/node": ^22.13.14
+  alchemy: ^0.82.1
+  better-auth: ^1.4.18
+  dotenv: ^17.2.2
+  drizzle-orm: ^0.45.1
+  hono: ^4.8.2
+  libsql: 0.5.22
+  typescript: ^5
   vitest: ^3.2.1
+  wrangler: ^4.54.0
+  zod: ^4.1.13
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - workerd

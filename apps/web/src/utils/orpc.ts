@@ -24,8 +24,11 @@ export const queryClient = new QueryClient({
 const link = new RPCLink({
   url: `${env.VITE_SERVER_URL}/rpc`,
   fetch(url, options) {
+    const headers = new Headers(options?.headers);
+    headers.set("x-request-id", crypto.randomUUID());
     return fetch(url, {
       ...options,
+      headers,
       credentials: "include",
     });
   },

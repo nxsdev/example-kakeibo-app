@@ -1,6 +1,5 @@
-import { db } from "@example-kakeibo-app/db";
 import { transactions, categories } from "@example-kakeibo-app/db/schema/index";
-import { eq, and, gte, lte, sql } from "drizzle-orm";
+import { eq, and, gte, lte, desc, count } from "drizzle-orm";
 import type { AuthenticatedContext } from "../../context";
 import type { z } from "zod/v4-mini";
 import type { transactionListInputSchema } from "@example-kakeibo-app/contract";
@@ -9,32 +8,30 @@ type Input = z.infer<typeof transactionListInputSchema>;
 
 /** 取引一覧を取得する（ページネーション + フィルタリング付き） */
 export async function handleListTransactions(input: Input, context: AuthenticatedContext) {
+  const { db } = context;
   const page = input.page ?? 1;
-  const perPage = input.per_page ?? 20;
+  const perPage = input.perPage ?? 20;
   const offset = (page - 1) * perPage;
 
-  const conditions = [eq(transactions.user_id, context.session.user.id)];
+  const conditions = [eq(transactions.userId, context.session.user.id)];
 
   if (input.type) {
     conditions.push(eq(transactions.type, input.type));
   }
-  if (input.category_id) {
-    conditions.push(eq(transactions.category_id, input.category_id));
+  if (input.categoryId) {
+    conditions.push(eq(transactions.categoryId, input.categoryId));
   }
-  if (input.date_from) {
-    conditions.push(gte(transactions.date, input.date_from));
+  if (input.dateFrom) {
+    conditions.push(gte(transactions.date, input.dateFrom));
   }
-  if (input.date_to) {
-    conditions.push(lte(transactions.date, input.date_to));
+  if (input.dateTo) {
+    conditions.push(lte(transactions.date, input.dateTo));
   }
 
   const whereClause = and(...conditions);
 
   // 件数取得
-  const [countResult] = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(transactions)
-    .where(whereClause);
+  const [countResult] = await db.select({ count: count() }).from(transactions).where(whereClause);
   const total = countResult?.count ?? 0;
 
   // データ取得（カテゴリ JOIN）
@@ -43,26 +40,26 @@ export async function handleListTransactions(input: Input, context: Authenticate
       id: transactions.id,
       amount: transactions.amount,
       type: transactions.type,
-      category_id: transactions.category_id,
+      categoryId: transactions.categoryId,
       date: transactions.date,
       note: transactions.note,
-      user_id: transactions.user_id,
-      created_at: transactions.created_at,
-      updated_at: transactions.updated_at,
+      userId: transactions.userId,
+      createdAt: transactions.createdAt,
+      updatedAt: transactions.updatedAt,
       category: {
         id: categories.id,
         name: categories.name,
         type: categories.type,
         icon: categories.icon,
         color: categories.color,
-        user_id: categories.user_id,
-        created_at: categories.created_at,
+        userId: categories.userId,
+        createdAt: categories.createdAt,
       },
     })
     .from(transactions)
-    .leftJoin(categories, eq(transactions.category_id, categories.id))
+    .leftJoin(categories, eq(transactions.categoryId, categories.id))
     .where(whereClause)
-    .orderBy(sql`${transactions.date} desc, ${transactions.created_at} desc`)
+    .orderBy(desc(transactions.date), desc(transactions.createdAt))
     .limit(perPage)
     .offset(offset);
 
@@ -71,8 +68,8 @@ export async function handleListTransactions(input: Input, context: Authenticate
     meta: {
       total,
       page,
-      per_page: perPage,
-      total_pages: Math.ceil(total / perPage),
+      perPage,
+      totalPages: Math.ceil(total / perPage),
     },
   };
 }

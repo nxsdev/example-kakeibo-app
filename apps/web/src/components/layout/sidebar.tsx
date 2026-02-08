@@ -4,11 +4,11 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { to: "/app/dashboard", label: "ダッシュボード", icon: LayoutDashboard },
-  { to: "/app/transactions", label: "取引一覧", icon: ArrowLeftRight },
-  { to: "/app/categories", label: "カテゴリ", icon: Tag },
-  { to: "/app/budgets", label: "予算", icon: Wallet },
-  { to: "/app/settings", label: "設定", icon: Settings },
+  { to: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard },
+  { to: "/transactions", label: "取引一覧", icon: ArrowLeftRight },
+  { to: "/categories", label: "カテゴリ", icon: Tag },
+  { to: "/budgets", label: "予算", icon: Wallet },
+  { to: "/settings", label: "設定", icon: Settings },
 ] as const;
 
 export default function Sidebar({ userName }: { userName: string }) {

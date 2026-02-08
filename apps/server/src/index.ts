@@ -1,115 +1,55 @@
-import { createContext } from "@example-kakeibo-app/api/context";
-import { appRouter } from "@example-kakeibo-app/api/routers/index";
-import { auth } from "@example-kakeibo-app/auth";
 import { env } from "@example-kakeibo-app/env/server";
-import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import { ORPCError, ValidationError } from "@orpc/server";
-import { RPCHandler } from "@orpc/server/fetch";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
+import { createLogger } from "@example-kakeibo-app/api/logger";
 
-const app = new Hono();
+// Durable Object クラスを re-export（Cloudflare に登録させるため）
+export { DatabaseDO } from "./durable-objects/database-do";
 
-app.use(logger());
+type AppVariables = { Variables: { requestId: string } };
+
+const app = new Hono<AppVariables>();
+
+// requestId ミドルウェア: ヘッダから取得 or 新規生成
+app.use(async (c, next) => {
+  const requestId =
+    c.req.header("x-request-id") ?? crypto.randomUUID();
+  c.set("requestId", requestId);
+  c.header("x-request-id", requestId);
+  await next();
+});
+
+// 構造化ロギングミドルウェア
+app.use(async (c, next) => {
+  const requestId = c.get("requestId") as string;
+  const logger = createLogger({
+    requestId,
+    service: "server",
+    operation: `${c.req.method} ${c.req.path}`,
+  });
+  logger.info({ event: "request" });
+  const start = Date.now();
+  await next();
+  logger.info({
+    event: "response",
+    status: c.res.status,
+    duration_ms: Date.now() - start,
+  });
+});
+
 app.use(
   "/*",
   cors({
     origin: env.CORS_ORIGIN,
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization", "x-request-id"],
     credentials: true,
   }),
 );
 
-// Better Auth ハンドラー
-app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
-
-// OpenAPI ハンドラー（Scalar + REST 互換用）
-const apiHandler = new OpenAPIHandler(appRouter, {
-  plugins: [
-    new OpenAPIReferencePlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()],
-    }),
-  ],
-  interceptors: [
-    async (options) => {
-      try {
-        return await options.next();
-      } catch (error) {
-        // バリデーションエラーを 422 に変換
-        if (
-          error instanceof ORPCError &&
-          error.code === "BAD_REQUEST" &&
-          error.cause instanceof ValidationError
-        ) {
-          throw new ORPCError("BAD_REQUEST", {
-            status: 422,
-            message: "バリデーションエラー",
-            data: { issues: error.cause.issues },
-            cause: error.cause,
-          });
-        }
-        console.error(error);
-        throw error;
-      }
-    },
-  ],
-});
-
-// RPC ハンドラー（フロントエンド通信用）
-const rpcHandler = new RPCHandler(appRouter, {
-  interceptors: [
-    async (options) => {
-      try {
-        return await options.next();
-      } catch (error) {
-        if (
-          error instanceof ORPCError &&
-          error.code === "BAD_REQUEST" &&
-          error.cause instanceof ValidationError
-        ) {
-          throw new ORPCError("BAD_REQUEST", {
-            status: 422,
-            message: "バリデーションエラー",
-            data: { issues: error.cause.issues },
-            cause: error.cause,
-          });
-        }
-        console.error(error);
-        throw error;
-      }
-    },
-  ],
-});
-
-// /rpc/* → RPC、/api/* → OpenAPI の両方をハンドル
-app.use("/*", async (c, next) => {
-  const context = await createContext({ context: c });
-
-  const rpcResult = await rpcHandler.handle(c.req.raw, {
-    prefix: "/rpc",
-    context,
-  });
-
-  if (rpcResult.matched) {
-    return c.newResponse(rpcResult.response.body, rpcResult.response);
-  }
-
-  const apiResult = await apiHandler.handle(c.req.raw, {
-    prefix: "/api",
-    context,
-  });
-
-  if (apiResult.matched) {
-    return c.newResponse(apiResult.response.body, apiResult.response);
-  }
-
-  await next();
-});
+// ヘルスチェック
+app.get("/", (c) => c.text("OK"));
 
 // Scalar API ドキュメント
 app.get(
@@ -121,8 +61,17 @@ app.get(
   }),
 );
 
-app.get("/", (c) => {
-  return c.text("OK");
-});
+// 全API/RPCリクエスト → DatabaseDO に転送
+app.on(["POST", "GET", "PATCH", "DELETE"], "/api/*", forwardToDO);
+app.on(["POST", "GET", "PATCH", "DELETE"], "/rpc/*", forwardToDO);
+
+async function forwardToDO(c: any): Promise<Response> {
+  const id = env.DATABASE_DO.idFromName("database");
+  // @ts-expect-error -- DurableObjectNamespace type instantiation is excessively deep
+  const stub = env.DATABASE_DO.get(id);
+  const original = c.req.raw.clone();
+  original.headers.set("x-request-id", c.get("requestId"));
+  return stub.fetch(original);
+}
 
 export default app;

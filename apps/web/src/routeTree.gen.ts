@@ -9,232 +9,283 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AppRouteRouteImport } from './routes/app/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppSettingsRouteImport } from './routes/app/settings'
-import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
-import { Route as AppCategoriesRouteImport } from './routes/app/categories'
-import { Route as AppBudgetsRouteImport } from './routes/app/budgets'
-import { Route as AppTransactionsIndexRouteImport } from './routes/app/transactions/index'
-import { Route as AppTransactionsNewRouteImport } from './routes/app/transactions/new'
+import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteRouteImport } from './routes/_auth/route'
+import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthenticatedDashboardRouteRouteImport } from './routes/_authenticated/dashboard/route'
+import { Route as AuthenticatedCategoriesRouteRouteImport } from './routes/_authenticated/categories/route'
+import { Route as AuthenticatedBudgetsRouteRouteImport } from './routes/_authenticated/budgets/route'
+import { Route as AuthenticatedTransactionsIndexRouteImport } from './routes/_authenticated/transactions/index'
+import { Route as AuthenticatedTransactionsNewRouteImport } from './routes/_authenticated/transactions/new'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const MarketingRouteRoute = MarketingRouteRouteImport.update({
+  id: '/_marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRouteRoute = AppRouteRouteImport.update({
-  id: '/app',
-  path: '/app',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => MarketingRouteRoute,
 } as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AppRouteRoute,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AppDashboardRoute = AppDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AppRouteRoute,
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
-const AppCategoriesRoute = AppCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppBudgetsRoute = AppBudgetsRouteImport.update({
-  id: '/budgets',
-  path: '/budgets',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppTransactionsIndexRoute = AppTransactionsIndexRouteImport.update({
-  id: '/transactions/',
-  path: '/transactions/',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppTransactionsNewRoute = AppTransactionsNewRouteImport.update({
-  id: '/transactions/new',
-  path: '/transactions/new',
-  getParentRoute: () => AppRouteRoute,
-} as any)
+const AuthenticatedDashboardRouteRoute =
+  AuthenticatedDashboardRouteRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCategoriesRouteRoute =
+  AuthenticatedCategoriesRouteRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedBudgetsRouteRoute =
+  AuthenticatedBudgetsRouteRouteImport.update({
+    id: '/budgets',
+    path: '/budgets',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTransactionsIndexRoute =
+  AuthenticatedTransactionsIndexRouteImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTransactionsNewRoute =
+  AuthenticatedTransactionsNewRouteImport.update({
+    id: '/transactions/new',
+    path: '/transactions/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/app': typeof AppRouteRouteWithChildren
-  '/login': typeof LoginRoute
-  '/app/budgets': typeof AppBudgetsRoute
-  '/app/categories': typeof AppCategoriesRoute
-  '/app/dashboard': typeof AppDashboardRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/transactions/new': typeof AppTransactionsNewRoute
-  '/app/transactions/': typeof AppTransactionsIndexRoute
+  '/': typeof MarketingIndexRoute
+  '/budgets': typeof AuthenticatedBudgetsRouteRoute
+  '/categories': typeof AuthenticatedCategoriesRouteRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteRoute
+  '/login': typeof AuthLoginRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/transactions/new': typeof AuthenticatedTransactionsNewRoute
+  '/transactions/': typeof AuthenticatedTransactionsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/app': typeof AppRouteRouteWithChildren
-  '/login': typeof LoginRoute
-  '/app/budgets': typeof AppBudgetsRoute
-  '/app/categories': typeof AppCategoriesRoute
-  '/app/dashboard': typeof AppDashboardRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/transactions/new': typeof AppTransactionsNewRoute
-  '/app/transactions': typeof AppTransactionsIndexRoute
+  '/': typeof MarketingIndexRoute
+  '/budgets': typeof AuthenticatedBudgetsRouteRoute
+  '/categories': typeof AuthenticatedCategoriesRouteRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteRoute
+  '/login': typeof AuthLoginRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/transactions/new': typeof AuthenticatedTransactionsNewRoute
+  '/transactions': typeof AuthenticatedTransactionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/app': typeof AppRouteRouteWithChildren
-  '/login': typeof LoginRoute
-  '/app/budgets': typeof AppBudgetsRoute
-  '/app/categories': typeof AppCategoriesRoute
-  '/app/dashboard': typeof AppDashboardRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/transactions/new': typeof AppTransactionsNewRoute
-  '/app/transactions/': typeof AppTransactionsIndexRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_marketing': typeof MarketingRouteRouteWithChildren
+  '/_authenticated/budgets': typeof AuthenticatedBudgetsRouteRoute
+  '/_authenticated/categories': typeof AuthenticatedCategoriesRouteRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_marketing/': typeof MarketingIndexRoute
+  '/_authenticated/transactions/new': typeof AuthenticatedTransactionsNewRoute
+  '/_authenticated/transactions/': typeof AuthenticatedTransactionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/app'
+    | '/budgets'
+    | '/categories'
+    | '/dashboard'
     | '/login'
-    | '/app/budgets'
-    | '/app/categories'
-    | '/app/dashboard'
-    | '/app/settings'
-    | '/app/transactions/new'
-    | '/app/transactions/'
+    | '/settings'
+    | '/transactions/new'
+    | '/transactions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app'
+    | '/budgets'
+    | '/categories'
+    | '/dashboard'
     | '/login'
-    | '/app/budgets'
-    | '/app/categories'
-    | '/app/dashboard'
-    | '/app/settings'
-    | '/app/transactions/new'
-    | '/app/transactions'
+    | '/settings'
+    | '/transactions/new'
+    | '/transactions'
   id:
     | '__root__'
-    | '/'
-    | '/app'
-    | '/login'
-    | '/app/budgets'
-    | '/app/categories'
-    | '/app/dashboard'
-    | '/app/settings'
-    | '/app/transactions/new'
-    | '/app/transactions/'
+    | '/_auth'
+    | '/_authenticated'
+    | '/_marketing'
+    | '/_authenticated/budgets'
+    | '/_authenticated/categories'
+    | '/_authenticated/dashboard'
+    | '/_auth/login'
+    | '/_authenticated/settings'
+    | '/_marketing/'
+    | '/_authenticated/transactions/new'
+    | '/_authenticated/transactions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AppRouteRoute: typeof AppRouteRouteWithChildren
-  LoginRoute: typeof LoginRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  MarketingRouteRoute: typeof MarketingRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_marketing': {
+      id: '/_marketing'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MarketingRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_marketing/': {
+      id: '/_marketing/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof MarketingIndexRouteImport
+      parentRoute: typeof MarketingRouteRoute
     }
-    '/app/settings': {
-      id: '/app/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
-      fullPath: '/app/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/app/dashboard': {
-      id: '/app/dashboard'
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
       path: '/dashboard'
-      fullPath: '/app/dashboard'
-      preLoaderRoute: typeof AppDashboardRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/app/categories': {
-      id: '/app/categories'
+    '/_authenticated/categories': {
+      id: '/_authenticated/categories'
       path: '/categories'
-      fullPath: '/app/categories'
-      preLoaderRoute: typeof AppCategoriesRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/categories'
+      preLoaderRoute: typeof AuthenticatedCategoriesRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/app/budgets': {
-      id: '/app/budgets'
+    '/_authenticated/budgets': {
+      id: '/_authenticated/budgets'
       path: '/budgets'
-      fullPath: '/app/budgets'
-      preLoaderRoute: typeof AppBudgetsRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/budgets'
+      preLoaderRoute: typeof AuthenticatedBudgetsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/app/transactions/': {
-      id: '/app/transactions/'
+    '/_authenticated/transactions/': {
+      id: '/_authenticated/transactions/'
       path: '/transactions'
-      fullPath: '/app/transactions/'
-      preLoaderRoute: typeof AppTransactionsIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/transactions/'
+      preLoaderRoute: typeof AuthenticatedTransactionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/app/transactions/new': {
-      id: '/app/transactions/new'
+    '/_authenticated/transactions/new': {
+      id: '/_authenticated/transactions/new'
       path: '/transactions/new'
-      fullPath: '/app/transactions/new'
-      preLoaderRoute: typeof AppTransactionsNewRouteImport
-      parentRoute: typeof AppRouteRoute
+      fullPath: '/transactions/new'
+      preLoaderRoute: typeof AuthenticatedTransactionsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
-interface AppRouteRouteChildren {
-  AppBudgetsRoute: typeof AppBudgetsRoute
-  AppCategoriesRoute: typeof AppCategoriesRoute
-  AppDashboardRoute: typeof AppDashboardRoute
-  AppSettingsRoute: typeof AppSettingsRoute
-  AppTransactionsNewRoute: typeof AppTransactionsNewRoute
-  AppTransactionsIndexRoute: typeof AppTransactionsIndexRoute
+interface AuthRouteRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
 }
 
-const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppBudgetsRoute: AppBudgetsRoute,
-  AppCategoriesRoute: AppCategoriesRoute,
-  AppDashboardRoute: AppDashboardRoute,
-  AppSettingsRoute: AppSettingsRoute,
-  AppTransactionsNewRoute: AppTransactionsNewRoute,
-  AppTransactionsIndexRoute: AppTransactionsIndexRoute,
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
 }
 
-const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
-  AppRouteRouteChildren,
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBudgetsRouteRoute: typeof AuthenticatedBudgetsRouteRoute
+  AuthenticatedCategoriesRouteRoute: typeof AuthenticatedCategoriesRouteRoute
+  AuthenticatedDashboardRouteRoute: typeof AuthenticatedDashboardRouteRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTransactionsNewRoute: typeof AuthenticatedTransactionsNewRoute
+  AuthenticatedTransactionsIndexRoute: typeof AuthenticatedTransactionsIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBudgetsRouteRoute: AuthenticatedBudgetsRouteRoute,
+  AuthenticatedCategoriesRouteRoute: AuthenticatedCategoriesRouteRoute,
+  AuthenticatedDashboardRouteRoute: AuthenticatedDashboardRouteRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTransactionsNewRoute: AuthenticatedTransactionsNewRoute,
+  AuthenticatedTransactionsIndexRoute: AuthenticatedTransactionsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface MarketingRouteRouteChildren {
+  MarketingIndexRoute: typeof MarketingIndexRoute
+}
+
+const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
+  MarketingIndexRoute: MarketingIndexRoute,
+}
+
+const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
+  MarketingRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AppRouteRoute: AppRouteRouteWithChildren,
-  LoginRoute: LoginRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  MarketingRouteRoute: MarketingRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -7,10 +7,10 @@ export const dashboardSummaryInputSchema = z.object({
 
 /** ダッシュボードサマリー出力 */
 export const dashboardSummaryOutputSchema = z.object({
-  total_income: z.number(),
-  total_expense: z.number(),
+  totalIncome: z.number(),
+  totalExpense: z.number(),
   balance: z.number(),
-  transaction_count: z.number(),
+  transactionCount: z.number(),
 });
 
 /** カテゴリ別内訳入力 */
@@ -21,9 +21,9 @@ export const dashboardByCategoryInputSchema = z.object({
 
 /** カテゴリ別内訳アイテム */
 export const categoryBreakdownItemSchema = z.object({
-  category_id: z.string(),
-  category_name: z.string(),
-  category_color: z.nullable(z.string()),
+  categoryId: z.string(),
+  categoryName: z.string(),
+  categoryColor: z.nullable(z.string()),
   total: z.number(),
   percentage: z.number(),
 });

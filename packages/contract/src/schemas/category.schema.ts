@@ -8,8 +8,8 @@ export const categorySchema = z.object({
   type: transactionTypeSchema,
   icon: z.nullable(z.string()),
   color: z.nullable(z.string()),
-  user_id: z.string(),
-  created_at: z.string(),
+  userId: z.string(),
+  createdAt: z.string(),
 });
 
 /** カテゴリ一覧入力 */
@@ -31,6 +31,11 @@ export const categoryUpdateInputSchema = z.object({
   name: z.optional(z.string().check(z.minLength(1, "カテゴリ名は必須です"))),
   icon: z.optional(z.string()),
   color: z.optional(z.string()),
+});
+
+/** カテゴリ一覧出力 */
+export const categoryListOutputSchema = z.object({
+  items: z.array(categorySchema),
 });
 
 /** カテゴリ削除入力 */

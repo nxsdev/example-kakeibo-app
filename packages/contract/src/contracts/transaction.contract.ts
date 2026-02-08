@@ -7,33 +7,63 @@ import {
   transactionCreateInputSchema,
   transactionUpdateInputSchema,
   transactionDeleteInputSchema,
+  transactionExportInputSchema,
+  transactionExportOutputSchema,
+  transactionImportInputSchema,
+  transactionImportOutputSchema,
 } from "../schemas/transaction.schema";
-import { z } from "zod/v4-mini";
+import {
+  deleteOutputSchema,
+  authErrors,
+  notFoundErrors,
+  importValidationErrors,
+} from "../schemas/common.schema";
 
 /** 取引 API コントラクト */
 export const transactionContract = oc.router({
   list: oc
     .route({ method: "GET", path: "/transactions", tags: ["Transaction"] })
     .input(transactionListInputSchema)
-    .output(transactionListOutputSchema),
+    .output(transactionListOutputSchema)
+    .errors({ ...authErrors }),
 
   get: oc
     .route({ method: "GET", path: "/transactions/{id}", tags: ["Transaction"] })
     .input(transactionGetInputSchema)
-    .output(transactionSchema),
+    .output(transactionSchema)
+    .errors({ ...authErrors, ...notFoundErrors }),
 
   create: oc
-    .route({ method: "POST", path: "/transactions/create", tags: ["Transaction"] })
+    .route({ method: "POST", path: "/transactions", tags: ["Transaction"] })
     .input(transactionCreateInputSchema)
-    .output(transactionSchema),
+    .output(transactionSchema)
+    .errors({ ...authErrors }),
 
   update: oc
-    .route({ method: "POST", path: "/transactions/update", tags: ["Transaction"] })
+    .route({ method: "PATCH", path: "/transactions/{id}", tags: ["Transaction"] })
     .input(transactionUpdateInputSchema)
-    .output(transactionSchema),
+    .output(transactionSchema)
+    .errors({ ...authErrors, ...notFoundErrors }),
 
   delete: oc
-    .route({ method: "POST", path: "/transactions/delete", tags: ["Transaction"] })
+    .route({ method: "DELETE", path: "/transactions/{id}", tags: ["Transaction"] })
     .input(transactionDeleteInputSchema)
-    .output(z.object({ success: z.boolean() })),
+    .output(deleteOutputSchema)
+    .errors({ ...authErrors, ...notFoundErrors }),
+
+  export: oc
+    .route({ method: "GET", path: "/transactions/export", tags: ["Transaction"] })
+    .input(transactionExportInputSchema)
+    .output(transactionExportOutputSchema)
+    .errors({ ...authErrors }),
+
+  import: oc
+    .route({ method: "POST", path: "/transactions/import", tags: ["Transaction"] })
+    .input(transactionImportInputSchema)
+    .output(transactionImportOutputSchema)
+    .errors({
+      ...authErrors,
+      BAD_REQUEST: { message: "CSVの形式が不正です" },
+      ...importValidationErrors,
+    }),
 });
